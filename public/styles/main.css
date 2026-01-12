@@ -200,10 +200,50 @@ main {
 .form-row {
     display: flex;
     gap: 1rem;
+    margin-bottom: 0.5rem;
 }
 
 .form-row input {
     flex: 1;
+}
+
+.form-row input.rating-input {
+    flex: 0.5;
+    min-width: 90px;
+    max-width: 110px;
+}
+
+.input-group {
+    flex: 1.5;
+    position: relative;
+}
+
+.input-group input#isbn-input {
+    width: 100%;
+    padding-right: 55px !important;
+}
+
+.isbn-counter {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-light);
+    pointer-events: none;
+    transition: all 0.2s ease;
+    background: var(--card-bg);
+    padding: 2px 4px;
+    border-radius: 4px;
+}
+
+.isbn-counter.valid {
+    color: var(--success);
+}
+
+.isbn-counter.invalid {
+    color: var(--danger);
 }
 
 .add-book input,
