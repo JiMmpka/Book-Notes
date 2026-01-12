@@ -1,4 +1,3 @@
--- Create Table for Books
 CREATE TABLE books (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
@@ -9,7 +8,6 @@ CREATE TABLE books (
     date_read DATE DEFAULT CURRENT_DATE
 );
 
--- Seed Data (Example books)
 INSERT INTO books (title, author, isbn, rating, notes, date_read) VALUES 
 ('The Lord of the Rings', 'J.R.R. Tolkien', '9780544003415', 10, 'Epic fantasy masterpiece.', '2022-04-10'),
 ('Pride and Prejudice', 'Jane Austen', '9780141439518', 9, 'Classic romance novel.', '2021-05-20'),

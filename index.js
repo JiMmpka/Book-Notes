@@ -5,13 +5,12 @@ import axios from "axios";
 import dotenv from "dotenv";
 import helmet from "helmet";
 
-// Load environment variables from .env file
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Security Middleware (Helmet)
+// Security
 app.use(
   helmet({
     contentSecurityPolicy: {
@@ -37,129 +36,91 @@ app.use(
   })
 );
 
-// Database configuration
+// Database
+const isProduction = process.env.NODE_ENV === "production";
+
 const db = new pg.Client({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_NAME,
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT,
+  connectionString: process.env.DATABASE_URL,
+  ssl: isProduction ? { rejectUnauthorized: false } : false,
 });
-db.connect();
+
+db.connect().catch((err) => console.error("Database connection error:", err));
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
+// Helpers
+const SORT_CONFIG = {
+  rating: { column: "rating", order: "DESC" },
+  title: { column: "title", order: "ASC" },
+  date_read: { column: "date_read", order: "DESC" },
+};
+
+const sanitize = (str) => str?.trim() || "";
+const isValidIsbn = (isbn) => isbn && isbn.length === 13 && !isNaN(isbn);
+const isValidRating = (r) => r >= 1 && r <= 10;
+
 // Routes
-
-// GET / - Display all books with sorting
 app.get("/", async (req, res) => {
-  const sortBy = req.query.sort || "date_read"; // default sort by recency
-  let order = "DESC";
-  
-  // Sort by title should be ascending (A-Z)
-  if (sortBy === "title") order = "ASC";
-  
-  try {
-    // Determine the sorting column safely
-    let orderByClause;
-    switch(sortBy) {
-        case 'rating':
-            orderByClause = 'rating';
-            break;
-        case 'title':
-            orderByClause = 'title';
-            break;
-        default:
-            orderByClause = 'date_read';
-    }
+  const sortBy = req.query.sort || "date_read";
+  const { column, order } = SORT_CONFIG[sortBy] || SORT_CONFIG.date_read;
 
-    const result = await db.query(`SELECT * FROM books ORDER BY ${orderByClause} ${order}`);
-    const books = result.rows;
-    res.render("index.ejs", { books: books, sortBy: sortBy });
+  try {
+    const result = await db.query(`SELECT * FROM books ORDER BY ${column} ${order}`);
+    res.render("index.ejs", { books: result.rows, sortBy });
   } catch (err) {
-    console.error("Error executing query", err.stack);
+    console.error("Database error:", err.message);
     res.status(500).send("Database Error");
   }
 });
 
-// POST /add - Add new book
 app.post("/add", async (req, res) => {
-  let { title, author, isbn, rating, notes, date_read } = req.body;
-  
-  // Trim inputs
-  title = title?.trim();
-  author = author?.trim();
-  isbn = isbn?.trim();
-  notes = notes?.trim();
+  const title = sanitize(req.body.title);
+  const author = sanitize(req.body.author);
+  const isbn = sanitize(req.body.isbn);
+  const notes = sanitize(req.body.notes);
+  const { rating, date_read } = req.body;
 
-  // Basic Validation
-  if (!title || !author || !date_read) {
-    console.log("Missing required fields");
-    return res.redirect("/"); 
-  }
-
-  if (!isbn || isbn.length !== 13 || isNaN(isbn)) {
-      console.log("Invalid ISBN");
-      // Could redirect with an error query param here
-      return res.redirect("/?error=Invalid ISBN");
-  }
-
-  if (rating < 1 || rating > 10) {
-      console.log("Invalid Rating");
-      return res.redirect("/?error=Invalid Rating");
+  if (!title || !author || !date_read || !isValidIsbn(isbn) || !isValidRating(rating)) {
+    return res.redirect("/");
   }
 
   try {
-    // Punkt 4: Użycie Axios do weryfikacji ISBN w Open Library API
-    const response = await axios.get(`https://openlibrary.org/api/books?bibkeys=ISBN:${isbn}&format=json`);
-    
-    // Sprawdzenie czy API zwróciło dane dla tego ISBN
-    if (Object.keys(response.data).length === 0) {
-      console.log("ISBN not found in Open Library, but proceeding anyway...");
-    }
-
+    await axios.get(`https://openlibrary.org/api/books?bibkeys=ISBN:${isbn}&format=json`);
     await db.query(
       "INSERT INTO books (title, author, isbn, rating, notes, date_read) VALUES ($1, $2, $3, $4, $5, $6)",
       [title, author, isbn, rating, notes, date_read]
     );
     res.redirect("/");
   } catch (err) {
-    console.error("Error adding book or API request failed:", err.message);
-    // Przekierowanie z błędem (można rozbudować o komunikaty dla użytkownika)
+    console.error("Error adding book:", err.message);
     res.redirect("/");
   }
 });
 
 app.post("/edit", async (req, res) => {
   const { id, notes, rating } = req.body;
-  
-  // Validation
-  if (rating < 1 || rating > 10) {
-     console.error("Invalid Rating in Edit");
-     return res.redirect("/");
+
+  if (!isValidRating(rating)) {
+    return res.redirect("/");
   }
 
   try {
-    await db.query(
-      "UPDATE books SET notes = $1, rating = $2 WHERE id = $3",
-      [notes, rating, id]
-    );
+    await db.query("UPDATE books SET notes = $1, rating = $2 WHERE id = $3", [notes, rating, id]);
     res.redirect("/");
   } catch (err) {
-    console.error("Error updating book", err.stack);
+    console.error("Error updating book:", err.message);
     res.redirect("/");
   }
 });
 
 app.post("/delete", async (req, res) => {
-  const id = req.body.id;
   try {
-    await db.query("DELETE FROM books WHERE id = $1", [id]);
+    await db.query("DELETE FROM books WHERE id = $1", [req.body.id]);
     res.redirect("/");
   } catch (err) {
-    console.error("Error deleting book", err.stack);
+    console.error("Error deleting book:", err.message);
     res.redirect("/");
   }
 });

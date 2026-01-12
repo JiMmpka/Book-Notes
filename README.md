@@ -20,7 +20,7 @@ A personal book tracking application where you can manage your reading list, add
 - **External API**: Open Library API
 - **Security**: Helmet
 
-## Prerequisities
+## Prerequisites
 
 Before running this project, ensure you have the following installed:
 - Node.js
@@ -30,8 +30,8 @@ Before running this project, ensure you have the following installed:
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
-   cd book-notes
+   git clone https://github.com/JiMmpka/Book-Notes.git
+   cd Book-Notes
    ```
 
 2. **Install dependencies**
@@ -44,19 +44,21 @@ Before running this project, ensure you have the following installed:
    - Run the SQL commands in `queries.sql` to set up the necessary table and initial data.
 
 4. **Environment Variables**
-   - Create a `.env` file in the root directory.
-   - Add the following variables:
-     ```
-     DB_USER=your_postgres_user
-     DB_HOST=localhost
-     DB_NAME=your_database_name
-     DB_PASSWORD=your_postgres_password
-     DB_PORT=5432
-     ```
+    - Create a `.env` file in the root directory.
+    - Add the following variables (local dev):
+       ```
+       DB_USER=your_postgres_user
+       DB_HOST=localhost
+       DB_NAME=your_database_name
+       DB_PASSWORD=your_postgres_password
+       DB_PORT=5432
+       PORT=3000
+       ```
+   - On Render set **only** the database variables from the Connections tab (DB_HOST/DB_PORT/DB_NAME/DB_USER/DB_PASSWORD). **Do not set PORT** — Render provides it automatically and the app uses `process.env.PORT || 3000`.
 
 5. **Run the Application**
    ```bash
-   node index.js
+   npm start
    ```
 
 6. **Access the App**
@@ -64,7 +66,7 @@ Before running this project, ensure you have the following installed:
 
 ## Security Notes
 
-This application uses Content Security Policy (CSP) via Helmet to ensure secure loading of resources.
+- Helmet CSP whitelists Open Library/Archive; inline event handlers are allowed via `scriptSrcAttr 'unsafe-inline'` (needed for cover fallbacks).
 
 ## License
 
