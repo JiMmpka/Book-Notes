@@ -35,7 +35,10 @@
     <% books.forEach(book => { %>
         <article class="book-card" id="book-<%= book.id %>">
             <div class="book-cover">
-                <img src="https://covers.openlibrary.org/b/isbn/<%= book.isbn %>-M.jpg" alt="<%= book.title %> cover" onerror="this.onerror=null; this.src='/assets/no-cover.svg';">
+                <img src="https://covers.openlibrary.org/b/isbn/<%= book.isbn %>-M.jpg" 
+                     alt="<%= book.title %> cover" 
+                     onerror="this.onerror=null; this.src='/assets/no-cover.svg';"
+                     onload="if(this.naturalWidth === 1 && this.naturalHeight === 1) { this.onload=null; this.src='/assets/no-cover.svg'; }">
                 <div class="rating-badge"><%= book.rating %>/10</div>
             </div>
             <div class="book-info">

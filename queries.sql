@@ -11,13 +11,10 @@ CREATE TABLE books (
 
 -- Seed Data (Example books)
 INSERT INTO books (title, author, isbn, rating, notes, date_read) VALUES 
-('The Pragmatic Programmer', 'Andrew Hunt', '9780201616224', 10, 'Essential reading for any software developer.', '2023-05-15'),
-('Clean Code', 'Robert C. Martin', '9780132350884', 9, 'Great principles for writing readable code.', '2023-06-20'),
-('Harry Potter and the Sorcerer''s Stone', 'J.K. Rowling', '9780590353427', 8, 'A classic start to a magical journey.', '2022-01-10'),
-('The Hobbit', 'J.R.R. Tolkien', '9780547928227', 9, 'An adventurous prelude to Lord of the Rings.', '2022-03-12'),
-('1984', 'George Orwell', '9780451524935', 10, 'A chilling dystopian novel.', '2021-07-01'),
-('To Kill a Mockingbird', 'Harper Lee', '9780061120084', 10, 'A powerful story about justice and morality.', '2021-11-05'),
-('The Great Gatsby', 'F. Scott Fitzgerald', '9780743273565', 7, 'A tragic story of the Jazz Age.', '2022-08-15'),
-('Sapiens', 'Yuval Noah Harari', '9780062316097', 9, 'Fascinating history of humankind.', '2023-02-28'),
-('Educated', 'Tara Westover', '9780399590504', 8, 'A memoir about growing up in a survivalist family.', '2023-09-10'),
-('Becoming', 'Michelle Obama', '9781524763138', 9, 'Inspiring memoir from the former First Lady.', '2023-10-01');
+('The Lord of the Rings', 'J.R.R. Tolkien', '9780544003415', 10, 'Epic fantasy masterpiece.', '2022-04-10'),
+('Pride and Prejudice', 'Jane Austen', '9780141439518', 9, 'Classic romance novel.', '2021-05-20'),
+('The Catcher in the Rye', 'J.D. Salinger', '9780316769480', 8, 'A story of teenage angst.', '2021-09-15'),
+('Atomic Habits', 'James Clear', '9780735211292', 10, 'Life-changing book on habit formation.', '2023-01-05'),
+('Dune', 'Frank Herbert', '9780441013593', 9, 'The best sci-fi novel ever written.', '2022-11-20'),
+('Brave New World', 'Aldous Huxley', '9780060850524', 8, 'A disturbing vision of the future.', '2021-08-30'),
+('The Alchemist', 'Paulo Coelho', '9780062315007', 7, 'A philosophical journey.', '2022-02-15'),
