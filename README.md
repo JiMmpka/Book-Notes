@@ -18,10 +18,12 @@ A personal book tracking application where you can manage your reading list, add
 ## Tech Stack
 
 - **Backend**: Node.js, Express.js
-- **Database**: PostgreSQL
+- **Database**: PostgreSQL (pg client)
 - **Frontend**: EJS (Embedded JavaScript), CSS3
-- **External API**: Open Library API
-- **Security**: Helmet
+- **External API**: Open Library API (via Axios)
+- **Security**: Helmet.js (CSP, XSS protection)
+- **Environment**: Dotenv for configuration management
+- **Deployment**: Render.com
 
 ## Prerequisites
 
@@ -47,8 +49,7 @@ Before running this project, ensure you have the following installed:
    - Run the SQL commands in `queries.sql` to set up the necessary table and initial data.
 
 4. **Environment Variables**
-    - Create a `.env` file in the root directory.
-    - Add the following variables (local dev):
+    - Create a `.env` file in the root directory for local development:
        ```
        DB_USER=your_postgres_user
        DB_HOST=localhost
@@ -57,7 +58,15 @@ Before running this project, ensure you have the following installed:
        DB_PORT=5432
        PORT=3000
        ```
-   - On Render set **only** the database variables from the Connections tab (DB_HOST/DB_PORT/DB_NAME/DB_USER/DB_PASSWORD). **Do not set PORT** — Render provides it automatically and the app uses `process.env.PORT || 3000`.
+
+## Deployment (e.g., Render.com)
+
+1. **Database**: Create a PostgreSQL instance on Render.
+2. **Web Service**: Connect your GitHub repository.
+3. **Environment Variables**: In the Render dashboard, add the following:
+   - `DATABASE_URL`: Use the **Internal Database URL** from your Render PostgreSQL dashboard.
+   - `PORT`: (Optional) Render sets this automatically.
+4. **Setup**: The application will automatically detect `DATABASE_URL` and use it for the connection, enabling SSL for security.
 
 5. **Run the Application**
    ```bash
