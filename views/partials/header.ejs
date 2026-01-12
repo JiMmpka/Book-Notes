@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Book Notes</title>
+    <link rel="stylesheet" href="/styles/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1><a href="/">📚 Book Notes</a></h1>
+            <p class="tagline">Track what you read, remember what matters</p>
+        </div>
+        <nav>
+            <form action="/" method="GET" class="sort-form">
+                <label for="sort">Sort by:</label>
+                <select name="sort" id="sort" onchange="this.form.submit()">
+                    <option value="date_read" <%= locals.sortBy === 'date_read' ? 'selected' : '' %>>📅 Recency</option>
+                    <option value="rating" <%= locals.sortBy === 'rating' ? 'selected' : '' %>>⭐ Rating</option>
+                    <option value="title" <%= locals.sortBy === 'title' ? 'selected' : '' %>>🔤 Title</option>
+                </select>
+            </form>
+            <button class="add-book-btn" onclick="toggleAddForm()">+ Add Book</button>
+        </nav>
+    </header>
+    <main>
